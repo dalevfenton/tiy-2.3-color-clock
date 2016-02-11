@@ -1,71 +1,86 @@
 (function(){
 
+  //utility functions used by others
+
+  //sets leading zero on one digit time formats
   function padTime ( timeNum ){
     return ("0" + timeNum ).slice(-2);
   }
+
+  // returns a nonzero 0-255 value for where 255 is at the highPt between 0 and
+  // 60 seconds
   function prorateMinute ( curSec, highPt ){
     var value = Math.floor( (Math.abs((curSec - highPt))/60)* 255);
-    console.log(value);
     return value;
   }
-  var d = new Date();
-  var hours = padTime( d.getHours() );
-  var minutes = padTime( d.getMinutes() );
-  var seconds = padTime( d.getSeconds() );
-  var builtTime = hours + ":" + minutes + ":" + seconds;
-  document.querySelector(".clock").innerHTML = builtTime;
-  var minutePercent = (( d.getSeconds() / 60) * 100) + "%";
-  document.querySelector(".line").width = minutePercent;
-  var myInterval = setInterval( setClock, 1000);
-  var clockEnter = document.querySelector('.clock');
-  var hexExit = document.querySelector('.hexcode');
-  var hex = 'ff00ff';
-  var colorCode;
-  var newInterval;
 
-  function setClock(){
-    d = new Date();
+  //sets all the values each time the main interval runs
+  function setValues(){
+    //time values
     hours = padTime( d.getHours() );
     minutes = padTime( d.getMinutes() );
     seconds = padTime( d.getSeconds() );
     builtTime = hours + ":" + minutes + ":" + seconds;
-    console.log ( hours + ":" + minutes + ":" + seconds );
-    document.querySelector(".clock").innerHTML = builtTime;
+
+    //line width values
     minuteRatio = ( d.getSeconds() / 60);
     minutePercent = (minuteRatio * 400) + "px";
-    console.log (minutePercent);
-    document.querySelector(".line").width = minutePercent;
-    console.log ( 'current second ' + d.getSeconds() );
-    var rValue = prorateMinute( d.getSeconds(), 30 ).toString(16);
-    var gValue = prorateMinute( d.getSeconds(), 20 ).toString(16);
-    var bValue = prorateMinute( d.getSeconds(), 40 ).toString(16);
-    console.log( rValue);
-    console.log( gValue);
-    console.log( bValue);
-    colorCode = "#"+rValue+gValue+bValue;
-    console.log( colorCode );
-    document.querySelector("body").style.backgroundColor = colorCode;
-    document.querySelector(".line").style.width = minutePercent;
 
+    //color values
+    rValue = prorateMinute( d.getSeconds(), 30 ).toString(16);
+    gValue = prorateMinute( d.getSeconds(), 20 ).toString(16);
+    bValue = prorateMinute( d.getSeconds(), 40 ).toString(16);
+    colorCode = "#"+rValue+gValue+bValue;
+
+    //print stuff to console
+    console.log ( hours + ":" + minutes + ":" + seconds );
+
+    //update DOM Elements
+    document.querySelector(".clock").innerHTML = builtTime;
+    document.querySelector(".line").style.width = minutePercent;
+    document.querySelector("body").style.backgroundColor = colorCode;
   }
-  function updateHex(){
-    document.querySelector('.hexcode').innerHTML = colorCode;
+
+  var d = new Date();
+  var hours, minutes, seconds, builtTime, minutePercent, newInterval;
+  var clockEnter = document.querySelector('.clock');
+  var hexExit = document.querySelector('.hexcode');
+  var rValue = 'ff';
+  var gValue = '00';
+  var bValue = 'ff';
+  var colorCode = "#" + rValue + gValue + bValue;
+
+  //setup initial layout of the page
+  setValues();
+
+  //set interval
+  var myInterval = setInterval( setClock, 1000);
+  //update data on interval
+  function setClock(){
+    d = new Date();
+    setValues();
   }
+
+  //            EVENT HANDLING FUNCTIONS
   function setHexCode () {
     document.querySelector('.hexcode').innerHTML = colorCode;
     document.querySelector('.hexcode').style.display = 'block';
     document.querySelector('.clock').style.display = 'none';
     newInterval = setInterval(updateHex, 1000);
-
   }
+
+  function updateHex(){
+    document.querySelector('.hexcode').innerHTML = colorCode;
+  }
+
   function resetClock(){
     document.querySelector('.hexcode').style.display = 'none';
     document.querySelector('.clock').style.display = 'block';
     clearInterval( newInterval );
   }
+
+  //          EVENT LISTENTERS
   clockEnter.addEventListener( 'mouseenter', setHexCode );
   hexExit.addEventListener('mouseleave', resetClock );
-
-
 
 }());
