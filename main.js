@@ -31,9 +31,12 @@
     gValue = prorateMinute( d.getSeconds(), 20 ).toString(16);
     bValue = prorateMinute( d.getSeconds(), 40 ).toString(16);
     colorCode = "#"+rValue+gValue+bValue;
+    colorCodeDisplay = '#' + padTime(rValue) + ' : ' + padTime(gValue) + ' : ' + padTime(bValue);
 
     //print stuff to console
-    console.log ( hours + ":" + minutes + ":" + seconds );
+    console.log ( 'time: ' + hours + ":" + minutes + ":" + seconds );
+    console.log ( 'at ' + seconds + ' seconds it is ' + Math.floor(minuteRatio*100) + '% of a minute');
+    console.log ( 'current color for the background is calculated at: ' + colorCodeDisplay );
 
     //update DOM Elements
     document.querySelector(".clock").innerHTML = builtTime;
@@ -42,13 +45,12 @@
   }
 
   var d = new Date();
-  var hours, minutes, seconds, builtTime, minutePercent, newInterval;
+  var hours, minutes, seconds, builtTime, minutePercent, newInterval, colorCode, colorCodeDisplay;
   var clockEnter = document.querySelector('.clock');
   var hexExit = document.querySelector('.hexcode');
   var rValue = 'ff';
   var gValue = '00';
   var bValue = 'ff';
-  var colorCode = "#" + rValue + gValue + bValue;
 
   //setup initial layout of the page
   setValues();
@@ -63,14 +65,14 @@
 
   //            EVENT HANDLING FUNCTIONS
   function setHexCode () {
-    document.querySelector('.hexcode').innerHTML = colorCode;
+    document.querySelector('.hexcode').innerHTML = colorCodeDisplay;
     document.querySelector('.hexcode').style.display = 'block';
     document.querySelector('.clock').style.display = 'none';
     newInterval = setInterval(updateHex, 1000);
   }
 
   function updateHex(){
-    document.querySelector('.hexcode').innerHTML = colorCode;
+    document.querySelector('.hexcode').innerHTML = colorCodeDisplay;
   }
 
   function resetClock(){
